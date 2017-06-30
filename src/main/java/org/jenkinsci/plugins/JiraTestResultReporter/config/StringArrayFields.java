@@ -78,11 +78,16 @@ public class StringArrayFields extends AbstractFields {
      */
     @Override
     public FieldInput getFieldInput(TestResult test, EnvVars envVars) {
-        ArrayList<String> stringList = new ArrayList<String>();
+        ArrayList<Object> objectList = new ArrayList<Object>();
         for(Entry v : values) {
-            stringList.add(VariableExpander.expandVariables(test, envVars, v.getValue()));
+            String stringInput = VariableExpander.expandVariables(test, envVars, v.getValue());
+            if (stringInput.matches("^-?\\d+$")) {
+                objectList.add(Integer.valueOf(stringInput));
+            } else {
+                objectList.add(stringInput);
+            }
         }
-        FieldInput fieldInput = new FieldInput(fieldKey, stringList);
+        FieldInput fieldInput = new FieldInput(fieldKey, objectList);
         return fieldInput;
     }
 
